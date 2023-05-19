@@ -36,7 +36,7 @@ const MenuMobile = ({
                       return (
                         <Link
                           key={id}
-                          href="/"
+                          href={`/category/${c.slug}`}
                           onClick={() => {
                             setShowCatMenu(false);
                             setMobileMenu(false);
