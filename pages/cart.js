@@ -19,6 +19,22 @@ const Cart = () => {
     return cartItems.reduce((total, val) => total + val.attributes.price, 0);
   }, [cartItems]);
 
+  // const handlePayment = async () => {
+  //   try {
+  //     setLoading(true);
+  //     const stripe = await stripePromise;
+  //     const res = await makePaymentRequest("/api/orders", {
+  //       products: cartItems,
+  //     });
+  //     await stripe.redirectToCheckout({
+  //       sessionId: res.stripeSession.id,
+  //     });
+  //   } catch (error) {
+  //     setLoading(false);
+  //     console.log(error);
+  //   }
+  // };
+
   const handlePayment = async () => {
     try {
       setLoading(true);
@@ -26,9 +42,14 @@ const Cart = () => {
       const res = await makePaymentRequest("/api/orders", {
         products: cartItems,
       });
-      await stripe.redirectToCheckout({
-        sessionId: res.stripeSession.id,
-      });
+
+      if (res && res.stripeSession && res.stripeSession.id) {
+        await stripe.redirectToCheckout({
+          sessionId: res.stripeSession.id,
+        });
+      } else {
+        throw new Error("Invalid stripeSession property in response.");
+      }
     } catch (error) {
       setLoading(false);
       console.log(error);
